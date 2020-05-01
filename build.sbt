@@ -12,7 +12,8 @@ lazy val casbahCommonDependencies = Seq(libraryDependencies ++= {
 val checkAlias = addCommandAlias("check", ";clean;coverage;test;coverageAggregate;coverageReport")
 
 val casbahDefaultSettings = Seq(
-  scalaVersion := "2.13.2"
+  scalaVersion := "2.13.2",
+  organization := "com.chilipiper"
 )
 
 lazy val commons = Project(
