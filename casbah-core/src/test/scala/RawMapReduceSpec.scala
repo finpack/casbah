@@ -325,7 +325,7 @@ class RawMapReduceSpec extends CasbahDBTestSpecification {
     }
 
     // Verify the treasury data is loaded or skip the test for now
-    collection.count() must beGreaterThan(0)
+    collection.countA() must beGreaterThan(0)
   }
 
 }

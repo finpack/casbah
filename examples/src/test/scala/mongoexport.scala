@@ -139,7 +139,7 @@ object mongoexport {
       case false => collection
     }
 
-    val cursor = collection.find(options.query)
+    val cursor = collection.findA(options.query)
     options.skip match {
       case None => cursor
       case Some(value) => cursor.skip(value)
@@ -150,7 +150,7 @@ object mongoexport {
     }
     options.sort match {
       case None => cursor
-      case Some(value) => cursor.sort(value)
+      case Some(value) => cursor.sortA(value)
     }
 
     output.write(startString)

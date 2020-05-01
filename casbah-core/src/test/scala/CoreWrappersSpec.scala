@@ -94,7 +94,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       collection.insert(MongoDBObject("foo" -> "bar"))
       collection.indexInfo.length must beEqualTo(1)
 
-      collection.createIndex(MongoDBObject("uid" -> 1), "user_index", unique = true)
+      collection.createIndexA(MongoDBObject("uid" -> 1), "user_index", unique = true)
       collection.indexInfo.length must beEqualTo(2)
 
       collection.indexInfo(1)("key") == MongoDBObject("uid" -> 1)
@@ -105,7 +105,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
 
       collection += MongoDBObject("loc" -> List(0, 0))
       val near = "loc" $near (0, 0)
-      collection.findOne(near) must throwAn[MongoException]
+      collection.findOneA(near) must throwAn[MongoException]
     }
 
     "Renaming a collection successfully tracks the rename in MongoCollection" in {
@@ -134,7 +134,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       collection.drop()
 
       collection.insert(MongoDBObject("foo" -> "bar"))
-      val basicFind = collection.find(MongoDBObject("foo" -> "bar"))
+      val basicFind = collection.findA(MongoDBObject("foo" -> "bar"))
 
       basicFind.size must beEqualTo(1)
 
@@ -142,7 +142,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
 
       findOne must beSome
 
-      val findOneMatch = collection.findOne(MongoDBObject("foo" -> "bar"))
+      val findOneMatch = collection.findOneA(MongoDBObject("foo" -> "bar"))
 
       findOneMatch must beSome
 
@@ -160,10 +160,10 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
 
     "Behave in chains" in {
 
-      val cur = collection.find(MongoDBObject("foo" -> "bar")) skip 5
+      val cur = collection.findA(MongoDBObject("foo" -> "bar")) skip 5
       cur must beAnInstanceOf[MongoCursor]
 
-      val cur2 = collection.find(MongoDBObject("foo" -> "bar")) limit 25 skip 12
+      val cur2 = collection.findA(MongoDBObject("foo" -> "bar")) limit 25 skip 12
       cur2 must beAnInstanceOf[MongoCursor]
 
     }
@@ -179,22 +179,22 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
     }
 
     "except just a key" in {
-      val l = collection.distinct("x")
+      val l = collection.distinctA("x")
       l.size must beEqualTo(10)
     }
 
     "except key and query" in {
-      val l = collection.distinct("x", "_id" $gt 95)
+      val l = collection.distinctA("x", "_id" $gt 95)
       l.size must beEqualTo(4)
     }
 
     "except key and readPref" in {
-      val l = collection.distinct("x", readPrefs = ReadPreference.Primary)
+      val l = collection.distinctA("x", readPrefs = ReadPreference.Primary)
       l.size must beEqualTo(10)
     }
 
     "except key, query and readPref" in {
-      val l = collection.distinct("x", "_id" $gt 95, ReadPreference.Primary)
+      val l = collection.distinctA("x", "_id" $gt 95, ReadPreference.Primary)
       l.size must beEqualTo(4)
     }
 
@@ -222,7 +222,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
     }
 
     "except list of ops" in {
-      val cursor: AggregationOutput = collection.aggregate(
+      val cursor: AggregationOutput = collection.aggregateA(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1))
@@ -234,7 +234,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
     "return a cursor when options are supplied" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.6")
       val aggregationOptions = AggregationOptions(allowDiskUse = true, outputMode = AggregationOptions.CURSOR)
-      val cursor: CommandCursor = collection.aggregate(
+      val cursor: CommandCursor = collection.aggregateA(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1))
@@ -252,7 +252,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       profileCollection.drop()
       database.command(MongoDBObject("profile" -> 2))
 
-      collection.aggregate(
+      collection.aggregateA(
         List(MongoDBObject("$match" -> ("score" $gte 7))),
         AggregationOptions(outputMode = AggregationOptions.CURSOR)
       )
@@ -269,7 +269,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       profileCollection.drop()
       database.command(MongoDBObject("profile" -> 2))
 
-      collection.aggregate(
+      collection.aggregateA(
         List(MongoDBObject("$match" -> ("score" $gte 7))),
         AggregationOptions(allowDiskUse = true, outputMode = AggregationOptions.CURSOR)
       )
@@ -281,7 +281,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
     "test explainAggregate" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.6")
       val aggregationOptions = AggregationOptions(AggregationOptions.CURSOR)
-      val explaination = collection.explainAggregate(
+      val explaination = collection.explainAggregateA(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1))
@@ -296,7 +296,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.5")
       val aggregationOptions = AggregationOptions(AggregationOptions.INLINE)
 
-      val cursor: CommandCursor = collection.aggregate(
+      val cursor: CommandCursor = collection.aggregateA(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1))
@@ -319,7 +319,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
         MongoDBObject("$out" -> outCollection.name)
       )
       cursor.results.iterator.hasNext must beFalse
-      outCollection.count() must beEqualTo(30)
+      outCollection.countA() must beEqualTo(30)
     }
 
     "handle $out in list of ops" in {
@@ -328,13 +328,13 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       val outCollection = database("outCollection")
       outCollection.drop()
 
-      val cursor: AggregationOutput = collection.aggregate(List(
+      val cursor: AggregationOutput = collection.aggregateA(List(
         MongoDBObject("$match" -> ("score" $gte 7)),
         MongoDBObject("$project" -> MongoDBObject("score" -> 1)),
         MongoDBObject("$out" -> outCollection.name)
       ))
       cursor.results.iterator.hasNext must beFalse
-      outCollection.count() must beEqualTo(30)
+      outCollection.countA() must beEqualTo(30)
     }
 
     "handle $out with options INLINE" in {
@@ -344,7 +344,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       outCollection.drop()
 
       val aggregationOptions = AggregationOptions(AggregationOptions.INLINE)
-      val cursor: CommandCursor = collection.aggregate(
+      val cursor: CommandCursor = collection.aggregateA(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1)),
@@ -353,7 +353,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
         aggregationOptions
       )
       cursor.size must beEqualTo(30)
-      outCollection.count() must beEqualTo(30)
+      outCollection.countA() must beEqualTo(30)
     }
 
     "handle $out with options CURSOR" in {
@@ -363,7 +363,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       outCollection.drop()
 
       val aggregationOptions = AggregationOptions(AggregationOptions.CURSOR)
-      val cursor: CommandCursor = collection.aggregate(
+      val cursor: CommandCursor = collection.aggregateA(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1)),
@@ -372,7 +372,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
         aggregationOptions
       )
       cursor.size must beEqualTo(30)
-      outCollection.count() must beEqualTo(30)
+      outCollection.countA() must beEqualTo(30)
     }
   }
 
@@ -415,13 +415,13 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       for (i <- ids) { collection += MongoDBObject("x" -> i) }
 
       // when
-      val findAndModify = Try(collection.findAndModify(MongoDBObject("{x: 10}"), MongoDBObject("{$inc: {x: 1000}}")))
+      val findAndModify = Try(collection.findAndModifyA(MongoDBObject("{x: 10}"), MongoDBObject("{$inc: {x: 1000}}")))
 
       // then
       findAndModify should beAFailedTry
 
       // when
-      val findAndModifyWithBypass = Try(collection.findAndModify(MongoDBObject("{x: 10}"), MongoDBObject("{}"),
+      val findAndModifyWithBypass = Try(collection.findAndModifyA(MongoDBObject("{x: 10}"), MongoDBObject("{}"),
         MongoDBObject("{}"), false, MongoDBObject("{$inc: {x: 100}}"), true, false, true, Duration(10, "seconds")))
 
       // then
@@ -434,7 +434,7 @@ class CoreWrappersSpec extends CasbahDBTestSpecification {
       insert should beAFailedTry
 
       // when
-      val insertWithBypass = Try(collection.insert(new InsertOptions().bypassDocumentValidation(true), MongoDBObject("{x: 101}")))
+      val insertWithBypass = Try(collection.insertA(new InsertOptions().bypassDocumentValidation(true), MongoDBObject("{x: 101}")))
 
       // then
       insertWithBypass should beASuccessfulTry

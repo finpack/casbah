@@ -74,7 +74,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       collection += MongoDBObject("date" -> jdkDate, "type" -> "jdk")
 
-      val jdkEntry = collection.findOne(
+      val jdkEntry = collection.findOneA(
         MongoDBObject("type" -> "jdk"),
         MongoDBObject("date" -> 1)
       )
@@ -90,7 +90,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       collection += MongoDBObject("date" -> jodaDate, "type" -> "joda")
 
-      val jodaEntry = collection.findOne(
+      val jodaEntry = collection.findOneA(
         MongoDBObject("type" -> "joda"),
         MongoDBObject("date" -> 1)
       )
@@ -109,7 +109,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       collection += MongoDBObject("date" -> localJodaDate, "type" -> "joda")
 
-      val jodaEntry = collection.findOne(
+      val jodaEntry = collection.findOneA(
         MongoDBObject("type" -> "joda"),
         MongoDBObject("date" -> 1)
       )
@@ -127,7 +127,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       collection += MongoDBObject("date" -> localJodaDate, "type" -> "joda")
 
-      val jodaEntry = collection.findOne(
+      val jodaEntry = collection.findOneA(
         MongoDBObject("type" -> "joda"),
         MongoDBObject("date" -> 1)
       )
@@ -145,7 +145,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       collection += MongoDBObject("date" -> jodaDate, "type" -> "joda")
 
-      val jodaEntry = collection.findOne(
+      val jodaEntry = collection.findOneA(
         MongoDBObject("type" -> "joda"),
         MongoDBObject("date" -> 1)
       )
@@ -174,7 +174,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
       // Normal JDK Date should work
       collection += MongoDBObject("date" -> jdkDate, "type" -> "jdk")
 
-      val jdkEntry = collection.findOne(
+      val jdkEntry = collection.findOneA(
         MongoDBObject("type" -> "jdk"),
         MongoDBObject("date" -> 1)
       )
@@ -190,7 +190,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       collection += MongoDBObject("date" -> jdkDate, "type" -> "jdk")
 
-      val jdkEntry = collection.findOne(
+      val jdkEntry = collection.findOneA(
         MongoDBObject("type" -> "jdk"),
         MongoDBObject("date" -> 1)
       )
@@ -202,7 +202,7 @@ class ConversionsSpec extends CasbahDBTestSpecification with BeforeEach {
 
       RegisterJodaTimeConversionHelpers()
 
-      val jodaEntry = collection.findOne(
+      val jodaEntry = collection.findOneA(
         MongoDBObject("type" -> "jdk"),
         MongoDBObject("date" -> 1)
       )
