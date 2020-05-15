@@ -315,7 +315,7 @@ class MapReduceSpec extends CasbahDBTestSpecification {
     }
 
     // Verify the treasury data is loaded or skip the test for now
-    collection.countA() must beGreaterThan(0)
+    collection.count() must beGreaterThan(0)
   }
 
 }

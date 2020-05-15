@@ -42,7 +42,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
       collection.drop()
       collection += MongoDBObject("foo" -> "baz")
       collection.update(MongoDBObject("foo" -> "baz"), $set("foo" -> "bar"))
-      collection.findA(MongoDBObject("foo" -> "bar")).count must beEqualTo(1)
+      collection.find(MongoDBObject("foo" -> "bar")).count must beEqualTo(1)
     }
     "Work with multiple pairs" in {
       val set = $set("foo" -> "baz", "x" -> 5.2,
@@ -50,7 +50,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
       collection.drop()
       collection += MongoDBObject("foo" -> "bar")
       collection.update(MongoDBObject("foo" -> "baz"), set)
-      collection.findA(MongoDBObject("foo" -> "bar")).count must beEqualTo(1)
+      collection.find(MongoDBObject("foo" -> "bar")).count must beEqualTo(1)
     }
   }
 
@@ -61,7 +61,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
       collection.drop()
       try {
         collection.update(MongoDBObject(), $setOnInsert("foo" -> "baz"), upsert = true)
-        collection.findA(MongoDBObject("foo" -> "baz")).count must beEqualTo(1)
+        collection.find(MongoDBObject("foo" -> "baz")).count must beEqualTo(1)
       } catch {
         case ex: WriteConcernException if ex.getErrorMessage != "Invalid modifier specified $setOnInsert" =>
           throw ex
@@ -76,7 +76,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
       collection.drop()
       try {
         collection.update(MongoDBObject(), set, upsert = true)
-        collection.findA(MongoDBObject("foo" -> "baz")).count must beEqualTo(1)
+        collection.find(MongoDBObject("foo" -> "baz")).count must beEqualTo(1)
       } catch {
         case ex: WriteConcernException =>
           if (ex.getErrorMessage != "Invalid modifier specified $setOnInsert")
@@ -90,8 +90,8 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
       collection.drop()
       try {
         collection.update(MongoDBObject(), $setOnInsert("x" -> 1) ++ $set("a" -> "b"), true)
-        collection.findA(MongoDBObject("x" -> 1)).count must beEqualTo(1)
-        collection.findA(MongoDBObject("a" -> "b")).count must beEqualTo(1)
+        collection.find(MongoDBObject("x" -> 1)).count must beEqualTo(1)
+        collection.find(MongoDBObject("a" -> "b")).count must beEqualTo(1)
       } catch {
         case ex: WriteConcernException =>
           if (ex.getErrorMessage != "Invalid modifier specified $setOnInsert")
@@ -128,7 +128,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
     "work as expected" in {
       collection.drop()
       collection += MongoDBObject("foo" -> "baz")
-      collection.findA($where("this.foo == 'baz'")).count must beEqualTo(1)
+      collection.find($where("this.foo == 'baz'")).count must beEqualTo(1)
     }
   }
 
@@ -190,23 +190,23 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
 
     "Accept multiple values" in {
       val or = $or("foo" -> "bar", "foo" -> 6)
-      collection.findA(or).count must beEqualTo(2)
+      collection.find(or).count must beEqualTo(2)
     }
     "Accept a mix" in {
       val or = $or {
         "foo" -> "bar" :: ("foo" $gt 5 $lt 10)
       }
-      collection.findA(or).count must beEqualTo(2)
+      collection.find(or).count must beEqualTo(2)
     }
 
     "Work with nested operators" in {
       "As a simple list (comma separated)" in {
         val or = $or("foo" $lt 6 $gt 1, "x" $gte 10 $lte 152)
-        collection.findA(or).count must beEqualTo(2)
+        collection.find(or).count must beEqualTo(2)
       }
       "As a cons (::  constructed) cell" in {
         val or = $or(("foo" $lt 6 $gt 1) :: ("x" $gte 10 $lte 152))
-        collection.findA(or).count must beEqualTo(2)
+        collection.find(or).count must beEqualTo(2)
       }
     }
   }
@@ -224,20 +224,20 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
 
     "Accept multiple values" in {
       val nor = $nor("foo" -> "bar", "x" -> "y")
-      collection.findA(nor).count must beEqualTo(2)
+      collection.find(nor).count must beEqualTo(2)
     }
     "Accept a mix" in {
       val nor = $nor("foo" -> 5 :: ("foo" $gt 5 $lt 10))
-      collection.findA(nor).count must beEqualTo(2)
+      collection.find(nor).count must beEqualTo(2)
     }
     "Work with nested operators" in {
       "As a simple list (comma separated)" in {
         val nor = $nor("foo" $lt 6 $gt 1, "x" $gte 6 $lte 10)
-        collection.findA(nor).count must beEqualTo(3)
+        collection.find(nor).count must beEqualTo(3)
       }
       "As a cons (::  constructed) cell" in {
         val nor = $nor(("foo" $lt 6 $gt 1) :: ("x" $gte 6 $lte 10))
-        collection.findA(nor).count must beEqualTo(3)
+        collection.find(nor).count must beEqualTo(3)
       }
     }
   }
@@ -253,22 +253,22 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
     }
     "Accept multiple values" in {
       val and = $and("foo" -> "bar", "x" -> "y")
-      collection.findA(and).count must beEqualTo(1)
+      collection.find(and).count must beEqualTo(1)
     }
     "Accept a mix" in {
       val and = $and {
         "foo" -> "bar" :: ("x" $gte 5 $lt 10)
       }
-      collection.findA(and).count must beEqualTo(1)
+      collection.find(and).count must beEqualTo(1)
     }
     "Work with nested operators" in {
       "As a simple list (comma separated)" in {
         val and = $and("foo" $lt 5 $gt 1, "x" $gte 10 $lte 152)
-        collection.findA(and).count must beEqualTo(1)
+        collection.find(and).count must beEqualTo(1)
       }
       "As a cons (::  constructed) cell" in {
         val and = $and(("foo" $lt 5 $gt 1) :: ("x" $gte 10 $lte 152))
-        collection.findA(and).count must beEqualTo(1)
+        collection.find(and).count must beEqualTo(1)
       }
     }
   }
@@ -404,7 +404,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
     "Accept a single value" in {
       collection.drop()
       collection += MongoDBObject("a" -> "b")
-      val addToSet = $addToSet("foo" -> "bar")
+      val addToSet = $addToSetQ("foo" -> "bar")
       collection.update(MongoDBObject("a" -> "b"), addToSet)
       val doc = collection.findOne().get
       doc.as[MongoDBList]("foo") must beEqualTo(MongoDBList("bar"))
@@ -412,7 +412,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
     "Accept multiple values" in {
       collection.drop()
       collection += MongoDBObject("a" -> "b")
-      val addToSet = $addToSet("foo" -> "bar", "x" -> 5.2)
+      val addToSet = $addToSetQ("foo" -> "bar", "x" -> 5.2)
       collection.update(MongoDBObject("a" -> "b"), addToSet)
       val doc = collection.findOne().get
       doc.keySet.asScala must beEqualTo(Set("_id", "a", "foo", "x"))
@@ -422,7 +422,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
     "Function with the $each operator for multi-value updates" in {
       collection.drop()
       collection += MongoDBObject("a" -> "b")
-      val addToSet = $addToSet("foo") $each ("x", "y", "foo", "bar", "baz")
+      val addToSet = $addToSetQ("foo") $each ("x", "y", "foo", "bar", "baz")
       collection.update(MongoDBObject("a" -> "b"), addToSet)
       val doc = collection.findOne().get
       doc.as[MongoDBList]("foo") must beEqualTo(MongoDBList("x", "y", "foo", "bar", "baz"))
@@ -474,7 +474,7 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
       collection.getDB.getSisterDB("admin").command(enableTextCommand)
       val textIndex = MongoDBObject("a" -> "text")
       collection.drop()
-      collection.createIndexA(textIndex)
+      collection.createIndex(textIndex)
 
       collection += MongoDBObject("_id" -> 0, "unindexedField" -> 0, "a" -> "textual content")
       collection += MongoDBObject("_id" -> 1, "unindexedField" -> 1, "a" -> "additional content")
@@ -485,33 +485,33 @@ class QueryIntegrationSpec extends CasbahDBTestSpecification {
     "Accept just $text" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.5")
 
-      collection.findA($text("textual content -irrelevant")).count should beEqualTo(2)
+      collection.find($text("textual content -irrelevant")).count should beEqualTo(2)
     }
 
     "Accept $text and other operators" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.5")
 
-      collection.findA(("unindexedField" $eq 0) ++ $text("textual content -irrelevant")).count should beEqualTo(1)
+      collection.find(("unindexedField" $eq 0) ++ $text("textual content -irrelevant")).count should beEqualTo(1)
     }
 
     "Accept $text and $language" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.5")
 
-      collection.findA($text("textual content -irrelevant") $language "english").count should beEqualTo(2)
+      collection.find($text("textual content -irrelevant") $language "english").count should beEqualTo(2)
     }
 
     "Work with $meta projection" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.5")
 
-      collection.findA($text("textual content -irrelevant"), "score" $meta).count should beEqualTo(2)
-      val result = collection.findOneA($text("textual content -irrelevant"), "score" $meta)
+      collection.find($text("textual content -irrelevant"), "score" $meta).count should beEqualTo(2)
+      val result = collection.findOne($text("textual content -irrelevant"), "score" $meta)
       result must haveSomeField("score")
     }
 
     "Work with $meta in projection and sort" in {
       serverIsAtLeastVersion(2, 5) must beTrue.orSkip("Needs server >= 2.5")
 
-      collection.findA($text("textual content -irrelevant"), "score" $meta).sortA("score" $meta).count should beEqualTo(2)
+      collection.find($text("textual content -irrelevant"), "score" $meta).sort("score" $meta).count should beEqualTo(2)
     }
   }
 

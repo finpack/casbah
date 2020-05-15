@@ -40,7 +40,7 @@ class GroupSpec extends CasbahDBTestSpecification {
       val initial = MongoDBObject("count" -> 0)
       val reduce = "function(obj, prev) { prev.count++ }"
 
-      val result = collection.groupA(key, cond, initial, reduce)
+      val result = collection.group(key, cond, initial, reduce)
       result.size must beEqualTo(31)
     }
 
@@ -51,7 +51,7 @@ class GroupSpec extends CasbahDBTestSpecification {
       val initial = MongoDBObject("count" -> 0)
       val reduce = "function(obj, prev) { prev.count++ }"
 
-      val result = collection.groupA(key, cond, initial, reduce, "")
+      val result = collection.group(key, cond, initial, reduce, "")
       result.size must beEqualTo(31)
     }
 
@@ -62,7 +62,7 @@ class GroupSpec extends CasbahDBTestSpecification {
       val reduce = "function(obj, prev) { prev.count++; }"
       val finalise = "function(out) { out.avg_count = 3; }"
 
-      val result = collection.groupA(key, cond, initial, reduce, finalise)
+      val result = collection.group(key, cond, initial, reduce, finalise)
       result.forall(_.getOrElse("avg_count", 2) == 3)
     }
   }
@@ -86,7 +86,7 @@ class GroupSpec extends CasbahDBTestSpecification {
     }
 
     // Verify the treasury data is loaded or skip the test for now
-    collection.countA() must beGreaterThan(0)
+    collection.count() must beGreaterThan(0)
   }
 
 }

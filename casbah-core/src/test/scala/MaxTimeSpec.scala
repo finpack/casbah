@@ -61,7 +61,7 @@ class MaxTimeSpec extends CasbahDBTestSpecification with BeforeAfterSpec {
   "MaxTime" should {
     "be supported by aggregation" in {
       val aggregationOptions = AggregationOptions(oneSecond)
-      lazy val aggregation = collection.aggregateA(
+      lazy val aggregation = collection.aggregate(
         List(
           MongoDBObject("$match" -> ("score" $gte 7)),
           MongoDBObject("$project" -> MongoDBObject("score" -> 1))
@@ -73,7 +73,7 @@ class MaxTimeSpec extends CasbahDBTestSpecification with BeforeAfterSpec {
     }
 
     "be supported by findAndModify" in {
-      lazy val findAndModify = collection.findAndModifyA(query = MongoDBObject("_id" -> 1), fields = MongoDBObject(),
+      lazy val findAndModify = collection.findAndModify(query = MongoDBObject("_id" -> 1), fields = MongoDBObject(),
         sort = MongoDBObject(), remove = false, update = MongoDBObject("a" -> 1),
         returnNew = true, upsert = false, maxTime = oneSecond)
 
@@ -87,7 +87,7 @@ class MaxTimeSpec extends CasbahDBTestSpecification with BeforeAfterSpec {
     }
 
     "be supported when calling findOne" in {
-      lazy val op = collection.findOneA(MongoDBObject.empty, MongoDBObject.empty,
+      lazy val op = collection.findOne(MongoDBObject.empty, MongoDBObject.empty,
         MongoDBObject.empty, ReadPreference.Primary,
         oneSecond)
       op should throwA[MongoExecutionTimeoutException]
@@ -99,12 +99,12 @@ class MaxTimeSpec extends CasbahDBTestSpecification with BeforeAfterSpec {
     }
 
     "be supported when calling getCount" in {
-      lazy val op = collection.getCountA(maxTime = oneSecond)
+      lazy val op = collection.getCount(maxTime = oneSecond)
       op should throwA[MongoExecutionTimeoutException]
     }
 
     "be supported when calling count" in {
-      lazy val op = collection.countA(maxTime = oneSecond)
+      lazy val op = collection.count(maxTime = oneSecond)
       op should throwA[MongoExecutionTimeoutException]
     }
 

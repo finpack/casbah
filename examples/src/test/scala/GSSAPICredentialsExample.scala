@@ -124,7 +124,7 @@ object GSSAPICredentialsExample {
 
     if (mongoClientURI.collection != None) {
       val collection = mongoClient(mongoClientURI.database.get)(mongoClientURI.collection.get)
-      Console.println(s"$collection count: ${collection.countA()}")
+      Console.println(s"$collection count: ${collection.count()}")
     } else if (mongoClientURI.collection != None) {
       Console.println(mongoClient(mongoClientURI.database.get).collectionNames())
     } else {

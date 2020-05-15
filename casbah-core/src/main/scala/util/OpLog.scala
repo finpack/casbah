@@ -60,7 +60,7 @@ class MongoOpLog(
   log.debug("OpLog Filter: '%s'", q)
 
   // scalastyle:off public.methods.have.type
-  val cursor: _root_.com.mongodb.casbah.Imports.MongoCursor = oplog.findA(q)
+  val cursor: _root_.com.mongodb.casbah.Imports.MongoCursor = oplog.find(q)
   cursor.option = Bytes.QUERYOPTION_TAILABLE
   cursor.option = Bytes.QUERYOPTION_AWAITDATA
 
@@ -74,7 +74,7 @@ class MongoOpLog(
 
   def verifyOpLog: BSONTimestamp = {
     // Verify the oplog exists
-    val last = oplog.find().sortA(MongoDBObject("$natural" -> 1)).limit(1)
+    val last = oplog.find().sort(MongoDBObject("$natural" -> 1)).limit(1)
     assume(
       last.hasNext,
       "No oplog found. mongod must be a --master or belong to a Replica Set."
@@ -87,7 +87,7 @@ class MongoOpLog(
      */
     startTimestamp match {
       case Some(ts) => {
-        oplog.findOneA(MongoDBObject("ts" -> ts)).orElse(
+        oplog.findOne(MongoDBObject("ts" -> ts)).orElse(
           throw new Exception("No oplog entry for requested start timestamp.")
         )
         ts

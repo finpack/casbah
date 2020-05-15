@@ -55,13 +55,13 @@ abstract class GenericGridFS protected[gridfs] extends Logging {
   protected[gridfs] def loan[T <: GenericGridFSFile](file: T)(op: T => Option[AnyRef]) = op(file)
 
   /** Find by query */
-  def findA[A](query: A)(implicit ev$1: A => DBObject): mutable.Buffer[MongoGridFSDBFile] = underlying.find(query).asScala
+  def find[A](query: A)(implicit ev$1: A => DBObject): mutable.Buffer[MongoGridFSDBFile] = underlying.find(query).asScala
 
   /** Find by query - returns a single item */
-  def find(id: ObjectId): MongoGridFSDBFile = underlying.find(id)
+  def findQ(id: ObjectId): MongoGridFSDBFile = underlying.find(id)
 
   /** Find by query  */
-  def find(filename: String): mutable.Buffer[MongoGridFSDBFile] = underlying.find(filename).asScala
+  def findQ(filename: String): mutable.Buffer[MongoGridFSDBFile] = underlying.find(filename).asScala
 
   def bucketName: String = underlying.getBucketName
 
@@ -73,15 +73,15 @@ abstract class GenericGridFS protected[gridfs] extends Logging {
     new MongoCursor(underlying.getFileList)
   }
 
-  def filesA[A](query: A)(implicit ev$1: A => DBObject): MongoCursor = {
+  def files[A](query: A)(implicit ev$1: A => DBObject): MongoCursor = {
     new MongoCursor(underlying.getFileList(query))
   }
 
-  def removeA[A](query: A)(implicit ev$1: A => DBObject): Unit = underlying.remove(query)
+  def remove[A](query: A)(implicit ev$1: A => DBObject): Unit = underlying.remove(query)
 
-  def remove(id: ObjectId): Unit = underlying.remove(id)
+  def removeQ(id: ObjectId): Unit = underlying.remove(id)
 
-  def remove(filename: String): Unit = underlying.remove(filename)
+  def removeQ(filename: String): Unit = underlying.remove(filename)
 
 }
 

@@ -103,7 +103,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
           val result = operation.execute()
           result.removedCount must beEqualTo(1)
           result.upserts.size must beEqualTo(0)
-          collection.countA() must beEqualTo(1)
+          collection.count() must beEqualTo(1)
         }
 
         "when documents match the query, a remove should remove all of them" in {
@@ -118,7 +118,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
           val result = operation.execute()
           result.removedCount must beEqualTo(2)
           result.upserts.size must beEqualTo(0)
-          collection.countA() must beEqualTo(1)
+          collection.count() must beEqualTo(1)
         }
 
         "when an update document contains a non $-prefixed key, update should throw IllegalArgumentException" in {
@@ -148,7 +148,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
             case true  => result.modifiedCount.get must beEqualTo(1)
             case false => result.modifiedCount.get must throwA[UnsupportedOperationException]
           }
-          collection.findA(MongoDBObject("y" -> 1)).count() must beEqualTo(1)
+          collection.find(MongoDBObject("y" -> 1)).count() must beEqualTo(1)
         }
 
         "when multiple document match the query, update should update all of them" in {
@@ -165,7 +165,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
             case true  => result.modifiedCount.get must beEqualTo(2)
             case false => result.modifiedCount.get must throwA[UnsupportedOperationException]
           }
-          collection.findA(MongoDBObject("y" -> 1)).count() must beEqualTo(2)
+          collection.find(MongoDBObject("y" -> 1)).count() must beEqualTo(2)
         }
 
         "when no document matches the query, update with upsert should insert a document" in {
@@ -209,7 +209,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
             case true  => result.modifiedCount.get must beEqualTo(2)
             case false => result.modifiedCount.get must throwA[UnsupportedOperationException]
           }
-          collection.countA(MongoDBObject("y" -> 1)) should beEqualTo(2)
+          collection.count(MongoDBObject("y" -> 1)) should beEqualTo(2)
 
         }
 
@@ -231,7 +231,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
           val result = operation.execute()
           result.matchedCount must beEqualTo(1)
           result.upserts.size must beEqualTo(0)
-          collection.countA() must beEqualTo(1)
+          collection.count() must beEqualTo(1)
           collection.findOne() must beSome(MongoDBObject("_id" -> 101, "x" -> 2))
         }
 
@@ -245,7 +245,7 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
           operation.find(MongoDBObject("x" -> true)).replaceOne(replacement)
           operation.execute()
 
-          collection.findOneA(MongoDBObject("x" -> false), MongoDBObject("_id" -> 0)) should beSome(replacement)
+          collection.findOne(MongoDBObject("x" -> false), MongoDBObject("_id" -> 0)) should beSome(replacement)
         }
 
         "when a document matches the query, updateOne with upsert should update that document" in {
@@ -283,14 +283,14 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
       addWritesTo(operation)
       operation.execute()
 
-      collection.findOneA(MongoDBObject("_id" -> 1)) must beSome(MongoDBObject("_id" -> 1, "x" -> 2))
-      collection.findOneA(MongoDBObject("_id" -> 2)) must beSome(MongoDBObject("_id" -> 2, "x" -> 3))
-      collection.findOneA(MongoDBObject("_id" -> 3)) must beNone
-      collection.findOneA(MongoDBObject("_id" -> 4)) must beNone
-      collection.findOneA(MongoDBObject("_id" -> 5)) must beSome(MongoDBObject("_id" -> 5, "x" -> 4))
-      collection.findOneA(MongoDBObject("_id" -> 6)) must beSome(MongoDBObject("_id" -> 6, "x" -> 5))
-      collection.findOneA(MongoDBObject("_id" -> 7)) must beSome(MongoDBObject("_id" -> 7))
-      collection.findOneA(MongoDBObject("_id" -> 8)) must beSome(MongoDBObject("_id" -> 8))
+      collection.findOne(MongoDBObject("_id" -> 1)) must beSome(MongoDBObject("_id" -> 1, "x" -> 2))
+      collection.findOne(MongoDBObject("_id" -> 2)) must beSome(MongoDBObject("_id" -> 2, "x" -> 3))
+      collection.findOne(MongoDBObject("_id" -> 3)) must beNone
+      collection.findOne(MongoDBObject("_id" -> 4)) must beNone
+      collection.findOne(MongoDBObject("_id" -> 5)) must beSome(MongoDBObject("_id" -> 5, "x" -> 4))
+      collection.findOne(MongoDBObject("_id" -> 6)) must beSome(MongoDBObject("_id" -> 6, "x" -> 5))
+      collection.findOne(MongoDBObject("_id" -> 7)) must beSome(MongoDBObject("_id" -> 7))
+      collection.findOne(MongoDBObject("_id" -> 8)) must beSome(MongoDBObject("_id" -> 8))
     }
 
     "error details should have correct index on ordered write failure" in {
@@ -332,14 +332,14 @@ class BulkWriteOperationSpec extends CasbahDBTestSpecification {
         case false => result.modifiedCount.get must throwA[UnsupportedOperationException]
       }
 
-      collection.findOneA(MongoDBObject("_id" -> 1)) must beSome(MongoDBObject("_id" -> 1, "x" -> 2))
-      collection.findOneA(MongoDBObject("_id" -> 2)) must beSome(MongoDBObject("_id" -> 2, "x" -> 3))
-      collection.findOneA(MongoDBObject("_id" -> 3)) must beNone
-      collection.findOneA(MongoDBObject("_id" -> 4)) must beNone
-      collection.findOneA(MongoDBObject("_id" -> 5)) must beSome(MongoDBObject("_id" -> 5, "x" -> 4))
-      collection.findOneA(MongoDBObject("_id" -> 6)) must beSome(MongoDBObject("_id" -> 6, "x" -> 5))
-      collection.findOneA(MongoDBObject("_id" -> 7)) must beSome(MongoDBObject("_id" -> 7))
-      collection.findOneA(MongoDBObject("_id" -> 8)) must beSome(MongoDBObject("_id" -> 8))
+      collection.findOne(MongoDBObject("_id" -> 1)) must beSome(MongoDBObject("_id" -> 1, "x" -> 2))
+      collection.findOne(MongoDBObject("_id" -> 2)) must beSome(MongoDBObject("_id" -> 2, "x" -> 3))
+      collection.findOne(MongoDBObject("_id" -> 3)) must beNone
+      collection.findOne(MongoDBObject("_id" -> 4)) must beNone
+      collection.findOne(MongoDBObject("_id" -> 5)) must beSome(MongoDBObject("_id" -> 5, "x" -> 4))
+      collection.findOne(MongoDBObject("_id" -> 6)) must beSome(MongoDBObject("_id" -> 6, "x" -> 5))
+      collection.findOne(MongoDBObject("_id" -> 7)) must beSome(MongoDBObject("_id" -> 7))
+      collection.findOne(MongoDBObject("_id" -> 8)) must beSome(MongoDBObject("_id" -> 8))
     }
 
     "error details should have correct index on unordered write failure" in {

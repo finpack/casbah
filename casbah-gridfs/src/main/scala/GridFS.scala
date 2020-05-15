@@ -209,8 +209,8 @@ class GridFS protected[gridfs] (override val underlying: MongoGridFS) extends Ge
         Option(fh.id)
     }
 
-  def findOneA[A](query: A)(implicit ev$1: A => DBObject): Option[GridFSDBFile] = {
-    filesCollection.findOneA(query) match {
+  def findOne[A](query: A)(implicit ev$1: A => DBObject): Option[GridFSDBFile] = {
+    filesCollection.findOne(query) match {
       case None => None
       case x => {
         val gridfsFile = x.get
@@ -220,9 +220,9 @@ class GridFS protected[gridfs] (override val underlying: MongoGridFS) extends Ge
     }
   }
 
-  def findOne(id: ObjectId): Option[GridFSDBFile] = findOneA(MongoDBObject("_id" -> id))
+  def findOneQ(id: ObjectId): Option[GridFSDBFile] = findOne(MongoDBObject("_id" -> id))
 
-  def findOne(filename: String): Option[GridFSDBFile] = findOneA(MongoDBObject("filename" -> filename))
+  def findOneQ(filename: String): Option[GridFSDBFile] = findOne(MongoDBObject("filename" -> filename))
 
 }
 

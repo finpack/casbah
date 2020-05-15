@@ -858,7 +858,7 @@ class DSLCoreOperatorsSpec extends CasbahMutableSpecification {
 
   "Casbah's $elemMatch operator" should {
     "Function as expected" in {
-      val elemMatch = "foo" $elemMatchA (MongoDBObject("a" -> 1) ++ ("b" $gt 1))
+      val elemMatch = "foo" $elemMatch (MongoDBObject("a" -> 1) ++ ("b" $gt 1))
       elemMatch must beEqualTo(
         MongoDBObject(
           "foo" -> MongoDBObject(
@@ -1049,7 +1049,7 @@ class DSLCoreOperatorsSpec extends CasbahMutableSpecification {
               GeoCoords(74.2332, -75.23452)
             )))
           ))
-        val near = "foo".$geoWithinA(geo)
+        val near = "foo".$geoWithin(geo)
         near must beEqualTo(
           MongoDBObject(
             "foo" -> MongoDBObject(
