@@ -14,10 +14,6 @@ val checkAlias = addCommandAlias("check", ";clean;coverage;test;coverageAggregat
 val casbahDefaultSettings = Seq(
   scalaVersion := "2.13.8",
   organization := "com.chilipiper",
-
-  bintrayRepository := "casbah",
-  bintrayOrganization := Some("chili-piper"),
-  bintrayReleaseOnPublish := true,
   licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0"))
 )
 
