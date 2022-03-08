@@ -17,30 +17,30 @@
 import sbt._
 
 object Dependencies {
-  val mongoJavaDriver  = "org.mongodb" % "mongo-java-driver" % "3.2.2"
-  val slf4j            = "org.slf4j" % "slf4j-api" % "1.6.0"
+  val mongoJavaDriver  = "org.mongodb" % "mongo-java-driver" % "3.12.10"
+  val slf4j            = "org.slf4j" % "slf4j-api" % "1.7.36"
   val junit            = "junit" % "junit" % "4.10" % "test"
-  val slf4jJCL         = "org.slf4j" % "slf4j-jcl" % "1.6.0" % "test"
+  val slf4jJCL         = "org.slf4j" % "slf4j-jcl" % "1.7.36" % "test"
 
   def scalatime(scalaVersion: String) =
     scalaVersion match {
-      case _ => "com.github.nscala-time" %% "nscala-time" % "2.22.0"
+      case _ => "com.github.nscala-time" %% "nscala-time" % "2.30.0"
     }
 
   def scalatest(scalaVersion: String) =
     scalaVersion match {
-      case _ => "org.scalatest" %% "scalatest" % "3.1.1"  % "test"
+      case _ => "org.scalatest" %% "scalatest" % "3.2.11"  % "test"
     }
 
   def specs2(scalaVersion: String) =
     scalaVersion match {
-      case _ => Seq("org.specs2" %% "specs2-core" % "4.9.3" % "test",
-        "org.specs2" %% "specs2-junit" % "4.9.3" % "test"
+      case _ => Seq("org.specs2" %% "specs2-core" % "4.14.1" % "test",
+        "org.specs2" %% "specs2-junit" % "4.14.1" % "test"
       )
     }
 
   def specs2Mock(scalaVersion: String) = {
-    Seq("org.specs2" %% s"specs2-mock" % "4.9.3" % "test")
+    Seq("org.specs2" %% s"specs2-mock" % "4.14.1" % "test")
   }
 
   def scalaStyle(scalaVersion: String) =

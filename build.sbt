@@ -12,7 +12,7 @@ lazy val casbahCommonDependencies = Seq(libraryDependencies ++= {
 val checkAlias = addCommandAlias("check", ";clean;coverage;test;coverageAggregate;coverageReport")
 
 val casbahDefaultSettings = Seq(
-  scalaVersion := "2.13.2",
+  scalaVersion := "2.13.8",
   organization := "com.chilipiper",
 
   bintrayRepository := "casbah",
@@ -64,3 +64,7 @@ lazy val casbah = Project(
   .dependsOn(commons, core, query, gridfs)
   .settings(checkAlias: _*)
   .settings(initialCommands in console := """import com.mongodb.casbah.Imports._""")
+
+
+  ThisBuild / githubOwner := "finpack"
+  ThisBuild / githubRepository := "casbah"
